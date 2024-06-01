@@ -1,0 +1,19 @@
+linux系统：centos7
+此教程所有操作均在 root 用户下进行！！
+jdk-1.8
+hadoop-2.6.0
+mysql-5.7.22
+hive-1.2.1
+zookeeper-3.4.5
+hbase-1.2.0
+sqoop-1.4.6
+spark-2.4.2
+flume-1.7.0
+kafka_2.12-2.0.0
+
+
+全部软件压缩包在master节点的 /opt/software 目录下
+除了MySQL安装在 /usr/local目录下 
+其余软件全部安装在 /opt/modules 目录下
+
+PATH环境变量的配置我给集中到了一起

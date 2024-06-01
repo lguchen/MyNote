@@ -1,0 +1,2 @@
+winget search/install +软件名 -i(选择安装路径)
+tracert +域名   路由追踪

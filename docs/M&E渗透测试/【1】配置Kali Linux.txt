@@ -1,0 +1,33 @@
+（1）打开VM虚拟机。（没有的可以去https://my.vmware.com/cn/web/vmware/free#desktop_end_user_computing/vmware_workstation_player/12_0下载，
+至于注册密钥可以自己去百度都有的。我也帮你们找了一些序列号：VF5XA-FNDDJ-085GZ-4NXZ9-N20E6，UC5MR-8NE16-H81WY-R7QGV-QG2D8，ZG1WH-ATY96-H80QP-X7PEX-Y30V4，
+AA3E0-0VDE1-0893Z-KGZ59-QGAVF，5A02H-AU243-TZJ49-GTC7K-3C61N。安装方法：遇到输入序列号时就输入序列号，否则狂点下一步，安装路径可以自己改。）
+（2）创建一个新的虚拟机。以VM11为例：典型---选择稍后安装操作系统---选择Linux，版本Debian 7.x---自己设置虚拟机安装位置---选择硬盘大小20GB，拆分为多个文件夹---完成
+（3）设置kali虚拟机硬件。点击编辑虚拟机设置---点击USB控制器---点击移除---同样方法移除声卡和打印机。
+（4）加载kali系统镜像。（kali系统可以去https://www.kali.org/downloads/下载，建议下载Kali Linux 32 bit）点击编辑虚拟机设置---点击CD/DVD---选择使用ISO映像文件---添加下载的KALI ISO的下载路径---完成
+（5）安装kali。选择install---根据引导安装---可以联网安装，联网安装会更新工具包（推荐）---磁盘选择适合新手使用。
+（6）安装虚拟机工具（kali1.0）。点击虚拟机---选择安装vmware tools---打开终端---输入umount /dev/sr0卸载光盘---输入mount /dev/sr0 /media加载光盘至/media目录---cd /media进入media目录--
+-tar zxvf VMwareTools-9.9.2-2496486.tar.gz -C /root/解压压缩归档文件至root目录下---cd进入root目录---cd vmware-tools-distrib进入解压后的文件目录---./vmware-install.pl运行安装vmtool，
+出来询问或暂停的之间按enter键，当出现死循环时，出现时直接在[yes]后输入no---安装完成---输入sync保存当前配置---重启
+（6）安装虚拟机工具（kali2.0）。kali2.0官方自己制作了一个vmtools，以1.0方法安装不上的可以参考此方法：打开终端---输入vim /etc/apt/sources.list---
+末尾添加deb http://mirrors.ustc.edu.cn/kali kali-rolling main non-free contrib保存退出---输入apt-get update(此时要确保虚拟机可以上网)回车---输入apt-get dist-upgrade回车---等待更新完成
+---reboot---apt-get update---apt-get install open-vm-tools-desktop fuse---reboot
+（7）安装拼音输入法。打开终端输入apt-get install fcitx fcitx-table-wbpy回车---安装完成后重启。
+（8）配置网络。在虚拟机上若想连接外网，虚拟机---网络适配器---设置---NAT模式，连接内网换成仅主机模式。若想更改kali虚拟机的ip地址等等。方法：打开编辑---虚拟网络编辑器--
+-即可自己设置ip，dns,dhcp等等---应用。注：此时kali虚拟机被分配的ip为你设置ip区段内的动态分配（此时需要重新连接一下网络才能使设置的ip生效）。
+如果想在此基础上设置静态ip需按如下操作：第一种设置临时静态ip（重启后恢复动态分配,即上一个方法设置的区间内的ip,dns等等），打开终端输入ifconfig eth0 ip/24回车-
+--输入网关ip地址route add default gw ip---录入dns服务器地址(若想连接外网dns可以不用输入，不同地区dns不一样，连接内网的可以自己设置)ehco nameserver ip > /etc/resolv.conf--
+-可输入ifconfig查看效果。第二种设置永久静态ip，打开终端输入vim /etc/network/interfaces--加入或更改eth0如下:auto eth0换行iface eth0 inet static换行address ip换行netmask 255.255.255.0换行network
+ 网络地址换行broadcast 广播地址换行gateway 网关ip---保存退出---可输入ifconfig查看效果（看不到效果的可以重启kali：reboot或networking：/etc/init.d/networking restart）。
+（无线网络将eth0换成waln0，最好是先使用ifconfig查看网卡名）
+（9）设置网络代理。要更改bash.bashrc和apt.conf，在/root/etc中，没有就新建一个。首先打开bash.bashrc在文件底部加入export ftp_proxy="ftp://user:password@proxyIP:port"回车
+export http_proxy="http://user:password@proxyIP:port"回车export https_proxy="https://user:password@proxyIP:port"回车export socks_proxy="https://user:password@proxyIP:port"回车--
+-用你的代理IP和端口代替proxyIP和port,同理替换用户名和密码。如无需验证，则只需写@符号后面的部分。打开apt.conf，输入Acquire::ftp::proxy "ftp://user:password@proxyIP:port/";
+回车Acquire::http::proxy "http://user:password@proxyIP:port/";回车Acquire::https::proxy "https://user:password@proxyIP:port/";回车Acquire::socks::proxy "https://user:password@proxyIP:port/";回车。
+（10）使用安全shell保护通信安全。将默认的SSH密钥移动到备份文件夹，生成一个新SSH的密钥集，为了验证新的密钥集唯一可比较二者的哈希值，并启动SSH服务，验证SSH服务正在运行，终止SSH服务。
+方法如下：cd /etc/ssh---mkdir keys_default---mv ssh_host_* keys_default---dpkg-reconfigure openssh-server---md5sum ssh_host_*---cd keys_defualt/---md5sum *---/etc/init.d/ssh start--
+-netstat -antp---/etc/init.d/ssh stop。
+（11）更新kali。将kali源添加至source.list文件。方法：vim /etc/apt/sources.list，底部添加源，保存退出。输入apt-get update，在执行apt-get upgrade或apt-get dist-upgrade前必须
+用update，upgrade安装新的软件包和更新已安装的软件包，dist-upgrade更新已安装的软件包 。apt-cache show <packagename>全面描述一个软件包，
+apt-get remove <packagename>移除一个软件包，apt-get install <packagename>安装一个软件包，都必须先运行apt-get update命令。使用dpkg -l|grep <tool name>可查看一个特定工具是否已安装。
+（12）制作一个系统快照。点击虚拟机---快照---拍摄快照。一定要制作一个快照，防止因意外操作导致系统崩溃。快照就相当于还原点。
+

@@ -1,0 +1,8 @@
+
+win+R
+msinfo32  查看系统信息
+
+dxdiag 电脑配置
+gpedit.msc管理模块
+slmgr /xpr查看windows激活时间
+lusrmgr.msc 本地用户和组
